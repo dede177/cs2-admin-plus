@@ -1,0 +1,14 @@
+{
+  "name": "admin-plus",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "build": "npm --prefix frontend run build",
+    "start": "cd backend && node src/index.js",
+    "dev": "npm run build && cd backend && npm run dev",
+    "plugin:build": "cd plugin/AdminPlus && DOTNET_ROOT=$HOME/.dotnet PATH=$HOME/.dotnet:$PATH dotnet build -c Release",
+    "plugin:deploy": "test -n \"$ADMINPLUS_PLUGIN_DIR\" && mkdir -p \"$ADMINPLUS_PLUGIN_DIR\" && cp -f plugin/AdminPlus/bin/Release/net8.0/AdminPlus.dll \"$ADMINPLUS_PLUGIN_DIR/AdminPlus.dll\"",
+    "plugin:release": "npm run plugin:build && npm run plugin:deploy"
+  }
+}

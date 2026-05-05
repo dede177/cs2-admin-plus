@@ -1,0 +1,16 @@
+# Node
+node_modules/
+dist/
+.env
+
+# .NET
+bin/
+obj/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+frontend/dist/
