@@ -95,6 +95,7 @@ export default function RoundControls({ onLog }) {
             <ActionBtn onClick={() => run('sv_cheats OFF', 'sv_cheats 0')}>sv_cheats 0</ActionBtn>
             <ActionBtn onClick={() => run('God all ON', 'sv_cheats 1; god')}>god (all)</ActionBtn>
             <ActionBtn onClick={() => run('Buddha all ON', 'sv_cheats 1; buddha')}>buddha (all)</ActionBtn>
+            <ActionBtn onClick={() => run('Buddha all OFF', 'sv_cheats 1; buddha 0; sv_cheats 0')}>buddha off (all)</ActionBtn>
             <ActionBtn onClick={() => run('No clip ON', 'sv_cheats 1; noclip')}>noclip</ActionBtn>
             <Divider />
             <Label>BUY SETTINGS</Label>
