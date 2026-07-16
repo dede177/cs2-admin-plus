@@ -36,6 +36,7 @@ const BOT_PRESETS = [
 ]
 
 const MATCH_PRESETS = [
+  ["Start Kimpi's 5v50", 'css_start'],
   ['Pause match', 'mp_pause_match'],
   ['Unpause match', 'mp_unpause_match'],
   ['Swap teams', 'mp_swapteams'],
