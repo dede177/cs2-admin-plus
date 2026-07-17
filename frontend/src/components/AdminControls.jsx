@@ -37,6 +37,8 @@ const BOT_PRESETS = [
 
 const MATCH_PRESETS = [
   ["Start Kimpi's 5v50", 'css_start'],
+  ["Stop Kimpi's 5v50", 'css_stop'],
+  ['Negev next round', 'css_negev'],
   ['Pause match', 'mp_pause_match'],
   ['Unpause match', 'mp_unpause_match'],
   ['Swap teams', 'mp_swapteams'],
@@ -138,7 +140,7 @@ export default function AdminControls({ players, onLog, onRefresh }) {
 
         {tab === 'match' && (
           <Grid>
-            {MATCH_PRESETS.map(([label, command]) => <Btn key={label} red={label === 'End match'} onClick={() => runRcon(label, command)}>{label}</Btn>)}
+            {MATCH_PRESETS.map(([label, command]) => <Btn key={label} red={label.startsWith('Stop Kimpi') || label === 'End match'} onClick={() => runRcon(label, command)}>{label}</Btn>)}
           </Grid>
         )}
       </div>
