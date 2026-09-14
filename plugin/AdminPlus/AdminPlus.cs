@@ -34,7 +34,7 @@ public class AdminPlus : BasePlugin
     }
 
     // ─── sm_playerinfo_all ───────────────────────────────────────────────────
-    // Returns one line per player: userid|name|team|hp|money|alive
+    // Returns one line per player: userid|name|team|hp|money|alive|steamid64
     // Called by the backend every poll instead of "status"
 
     [ConsoleCommand("sm_playerinfo_all", "Dump all player info for the web panel")]
@@ -57,7 +57,7 @@ public class AdminPlus : BasePlugin
 
             int money = player.InGameMoneyServices?.Account ?? 0;
 
-            info.ReplyToCommand($"PLAYERINFO:{player.UserId}|{player.PlayerName}|{team}|{hp}|{money}|{(alive ? "1" : "0")}");
+            info.ReplyToCommand($"PLAYERINFO:{player.UserId}|{player.PlayerName}|{team}|{hp}|{money}|{(alive ? "1" : "0")}|{player.SteamID}");
         }
         info.ReplyToCommand("PLAYERINFO:END");
     }

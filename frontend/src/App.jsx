@@ -11,6 +11,32 @@ import Settings from './pages/Settings.jsx'
 import { useServerStatus } from './hooks/useServerStatus.js'
 
 const PAGES = new Set(['overview', 'players', 'maps', 'practice', 'console', 'settings'])
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true'
+
+function demoRunResult(label) {
+  const command = label.startsWith('RCON: ') ? label.slice(6) : ''
+  if (command === 'status') {
+    return {
+      result: [
+        'hostname: CS2 Admin Plus Demo Server',
+        'map     : de_mirage',
+        'players : 12 humans, 0 bots (24 max)',
+        '# userid name      state   ping',
+        '# 1      jey       active  21',
+        '# 6      s1mple    active  19',
+        '# 11     G2TV      spec    0',
+      ].join('\n'),
+    }
+  }
+  if (command === 'css_plugins list') {
+    return { result: '[01] AdminPlus 1.0.0 by dede177\n1 plugin loaded.' }
+  }
+  if (command === 'maps *') {
+    return { result: 'de_ancient.bsp\nde_anubis.bsp\nde_dust2.bsp\nde_inferno.bsp\nde_mirage.bsp\nde_nuke.bsp\nde_vertigo.bsp' }
+  }
+  if (command) return { result: `[demo simulation] accepted: ${command}` }
+  return { result: 'Demo simulation' }
+}
 
 function initialPage() {
   const hash = window.location.hash.replace(/^#\/?/, '')
@@ -18,7 +44,7 @@ function initialPage() {
 }
 
 export default function App() {
-  const [authed, setAuthed] = useState(() => Boolean(localStorage.getItem('api_secret')))
+  const [authed, setAuthed] = useState(() => DEMO_MODE || Boolean(localStorage.getItem('api_secret')))
 
   if (!authed) {
     return <Login onLogin={() => setAuthed(true)} />
@@ -58,7 +84,7 @@ function AuthenticatedApp({ onLogout }) {
 
   async function run(label, fn) {
     try {
-      const result = await fn()
+      const result = DEMO_MODE ? demoRunResult(label) : await fn()
       pushActivity(label, 'success')
       return result
     } catch (error) {
@@ -88,15 +114,15 @@ function AuthenticatedApp({ onLogout }) {
         return <Settings connection={server.connection} map={server.map} players={server.players} lastUpdated={server.lastUpdated} error={server.error} onLogout={logout} onRefresh={server.refresh} />
       case 'overview':
       default:
-        return <Overview players={server.players} map={server.map} connection={server.connection} lastUpdated={server.lastUpdated} activity={activity} onRun={run} onRefresh={server.refresh} onSelectPlayer={setSelectedPlayer} />
+        return <Overview players={server.players} map={server.map} meta={server.meta} connection={server.connection} lastUpdated={server.lastUpdated} onRun={run} onRefresh={server.refresh} onSelectPlayer={setSelectedPlayer} onNavigate={navigate} />
     }
-  }, [page, server.players, server.map, server.connection, server.lastUpdated, server.error, server.refresh, activity])
+  }, [page, server.players, server.map, server.meta, server.connection, server.lastUpdated, server.error, server.refresh, activity])
 
   return (
     <div className="app-shell">
-      <TopNav active={page} onNavigate={navigate} connection={server.connection} map={server.map} players={server.players} onRefresh={() => server.refresh().catch(() => {})} />
+      <TopNav active={page} onNavigate={navigate} connection={server.connection} map={server.map} players={server.players} meta={server.meta} onRefresh={() => server.refresh().catch(() => {})} />
 
-      {server.error && (
+      {!DEMO_MODE && server.error && (
         <div className={`connection-banner connection-banner--${server.lastUpdated ? 'stale' : 'offline'}`}>
           <strong>{server.lastUpdated ? 'Server data may be stale.' : 'Unable to reach the server.'}</strong>
           <span>{server.error}</span>

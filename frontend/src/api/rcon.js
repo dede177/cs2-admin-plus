@@ -24,7 +24,6 @@ async function get(path) {
   return res.json()
 }
 
-// Players
 export const getStatus       = ()                     => get('/players')
 export const respawnPlayer   = (userid)               => post('/players/respawn', { userid })
 export const setTeam         = (userid, team)         => post('/players/setteam', { userid, team })
@@ -37,8 +36,6 @@ export const stripWeapons    = (userid)               => post('/players/stripwea
 export const godMode         = (userid)               => post('/players/god', { userid })
 export const slapPlayer      = (userid, damage)       => post('/players/slap', { userid, damage })
 export const kickPlayer      = (userid)               => post('/players/kick', { userid })
-
-// Server
 export const restartRound    = ()                     => post('/server/restartround')
 export const endMatch        = ()                     => post('/server/endmatch')
 export const startWarmup     = ()                     => post('/server/warmup')

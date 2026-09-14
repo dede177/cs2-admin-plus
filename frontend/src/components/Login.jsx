@@ -1,80 +1,52 @@
 import { useState } from 'react'
+import { Brand, Button, Field } from './ui.jsx'
+import { getStatus } from '../api/rcon'
 
 export default function Login({ onLogin }) {
   const [secret, setSecret] = useState('')
-  const [error, setError]   = useState('')
-  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
+  async function submit(event) {
+    event.preventDefault()
+    if (!secret.trim()) return
+    setBusy(true)
     setError('')
+    localStorage.setItem('api_secret', secret.trim())
     try {
-      localStorage.setItem('api_secret', secret)
-      const res = await fetch('/health')
-      // Test the secret against a real protected endpoint
-      const test = await fetch('/api/players', {
-        headers: { 'x-api-secret': secret }
-      })
-      if (test.status === 401) {
-        setError('Wrong API secret.')
-        localStorage.removeItem('api_secret')
-        return
-      }
+      await getStatus()
       onLogin()
-    } catch {
-      setError('Could not reach backend. Is it running?')
+    } catch (err) {
+      localStorage.removeItem('api_secret')
+      setError(err?.message || 'Unable to authenticate')
     } finally {
-      setLoading(false)
+      setBusy(false)
     }
   }
 
   return (
-    <div style={{
-      minHeight: '100vh', background: '#0d0f12',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Rajdhani', sans-serif",
-    }}>
-      <div style={{
-        background: '#13161b', border: '1px solid #ffffff18',
-        borderRadius: 12, padding: '40px 36px', width: 360,
-      }}>
-        <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '0.12em', color: '#e8eaf0', marginBottom: 6 }}>
-          CS2 <span style={{ color: '#ffaa00' }}>ADMIN</span> PANEL
-        </div>
-        <div style={{ fontSize: 13, color: '#8a909c', marginBottom: 28 }}>Enter your API secret to continue</div>
-
-        <form onSubmit={handleSubmit}>
-          <input
-            type="password"
-            placeholder="API Secret"
-            value={secret}
-            onChange={e => setSecret(e.target.value)}
-            style={{
-              width: '100%', fontFamily: "'Share Tech Mono', monospace",
-              fontSize: 13, padding: '10px 12px', borderRadius: 8,
-              border: '1px solid #ffffff18', background: '#1a1e26',
-              color: '#e8eaf0', marginBottom: 12, boxSizing: 'border-box',
-            }}
-          />
-          {error && <div style={{ color: '#ff4545', fontSize: 12, marginBottom: 12 }}>{error}</div>}
-          <button
-            type="submit"
-            disabled={loading || !secret}
-            style={{
-              width: '100%', fontFamily: "'Rajdhani', sans-serif",
-              fontSize: 15, fontWeight: 600, padding: '10px',
-              borderRadius: 8, border: '1px solid #ffffff28',
-              background: loading ? '#1a1e26' : '#20252f',
-              color: loading ? '#8a909c' : '#e8eaf0',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              letterSpacing: '0.08em',
-            }}
-          >
-            {loading ? 'CONNECTING...' : 'CONNECT'}
-          </button>
+    <main className="login-screen">
+      <div className="login-screen__art" />
+      <section className="login-card">
+        <Brand />
+        <p className="login-card__eyebrow">SERVER CONTROL</p>
+        <h1>Keep the game moving.</h1>
+        <p className="login-card__copy">Connect to your CS2 Admin Plus server using the API secret configured on the backend.</p>
+        <form onSubmit={submit}>
+          <Field label="API secret">
+            <input
+              type="password"
+              autoFocus
+              autoComplete="current-password"
+              placeholder="Enter server secret"
+              value={secret}
+              onChange={(e) => setSecret(e.target.value)}
+            />
+          </Field>
+          {error && <div className="form-error">{error}</div>}
+          <Button tone="primary" busy={busy} type="submit">Connect to server</Button>
         </form>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }

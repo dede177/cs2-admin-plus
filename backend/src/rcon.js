@@ -1,4 +1,5 @@
 const net = require('net')
+const { enrichPlayersWithAvatars } = require('./steamAvatars')
 
 const SERVERDATA_AUTH        = 3
 const SERVERDATA_EXECCOMMAND = 2
@@ -199,7 +200,7 @@ async function getPlayerInfo() {
 
     const players = []
     for (const line of raw.split('\n')) {
-      const match = line.match(/PLAYERINFO:(\d+)\|(.+?)\|(\w+)\|(\d+)\|(\d+)\|([01])/)
+      const match = line.match(/PLAYERINFO:(\d+)\|(.+?)\|(\w+)\|(\d+)\|(\d+)\|([01])(?:\|(\d{16,20}))?/)
       if (!match) continue
       players.push({
         userid: match[1],
@@ -208,6 +209,7 @@ async function getPlayerInfo() {
         hp:     parseInt(match[4]),
         money:  parseInt(match[5]),
         state:  match[6] === '1' ? 'active' : 'dead',
+        steamid: match[7] || undefined,
         ping:   0,
         isBot:  false,
       })
@@ -218,8 +220,10 @@ async function getPlayerInfo() {
     const mapMatch  = statusRaw.match(/loaded spawngroup\(\s*1\).*\[1:\s*(\S+?)\s*\|/)
     const map       = mapMatch ? mapMatch[1] : (statusRaw.match(/^map\s*:\s*(\S+)/m)?.[1] || 'unknown')
 
-    console.log(`[PlayerInfo] map=${map} players=${players.length}`, players.map(p => `${p.name}(${p.team})`))
-    return { players, map }
+    const enrichedPlayers = await enrichPlayersWithAvatars(players)
+
+    console.log(`[PlayerInfo] map=${map} players=${enrichedPlayers.length}`, enrichedPlayers.map(p => `${p.name}(${p.team})`))
+    return { players: enrichedPlayers, map }
 
   } catch (err) {
     console.warn('[AdminPlus] Plugin error, falling back to status:', err.message)
