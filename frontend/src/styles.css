@@ -310,41 +310,133 @@ select { cursor: pointer; }
 /* Login */
 .login-screen {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(360px, 520px);
   background: #02080e;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
 }
 .login-screen__art {
-  position: relative;
-  background:
-    linear-gradient(90deg, rgba(2,8,14,.06), rgba(2,8,14,.36) 60%, #02080e 100%),
-    linear-gradient(0deg, rgba(2,8,14,.74), rgba(2,8,14,.12)),
-    url('/map-art/mirage-hero.webp') center/cover;
-}
-.login-screen__art::before {
-  content: 'CONTROL YOUR SERVER.  KEEP THE GAME MOVING.';
-  position: absolute;
-  left: 5vw;
-  bottom: 8vh;
-  width: 360px;
-  color: rgba(255,255,255,.82);
-  font-family: var(--font-display);
-  font-size: clamp(30px, 4vw, 68px);
-  font-weight: 700;
-  line-height: .92;
-  letter-spacing: .035em;
-  white-space: pre-wrap;
-}
-.login-screen__art::after {
-  content: '';
   position: absolute;
   inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #06111a url('/login-backgrounds/mirage.webp') center / cover no-repeat;
+}
+.login-screen__backdrops,
+.login-screen__backdrop,
+.login-screen__veil,
+.login-screen__grid {
+  position: absolute;
+  inset: 0;
+}
+.login-screen__backdrops { z-index: 0; }
+.login-screen__backdrop {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--scene-position, center);
+  opacity: 0;
+  z-index: 0;
+  filter: saturate(.98) contrast(1.02) brightness(.96);
+  transform: scale(var(--scene-start-scale, 1.018)) translate3d(var(--scene-start-x, 0), var(--scene-start-y, 0), 0);
+}
+.login-screen__backdrop.is-active {
+  opacity: 1;
+  z-index: 1;
+  transform: scale(var(--scene-end-scale, 1.09)) translate3d(var(--scene-end-x, 0), var(--scene-end-y, 0), 0);
+  transition: transform 12s linear;
+  will-change: transform;
+}
+.login-screen__backdrop.is-leaving {
+  opacity: 0;
+  z-index: 2;
+  transform: scale(var(--scene-end-scale, 1.09)) translate3d(var(--scene-end-x, 0), var(--scene-end-y, 0), 0);
+  transition:
+    opacity 2.8s cubic-bezier(.45, 0, .55, 1),
+    transform 12s linear;
+  will-change: opacity, transform;
+}
+.login-screen__veil {
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 72%, rgba(7,22,36,.08), transparent 32%),
+    linear-gradient(90deg, rgba(2,8,14,.62) 0%, rgba(2,8,14,.26) 36%, rgba(2,8,14,.12) 68%, rgba(2,8,14,.44) 100%),
+    linear-gradient(0deg, rgba(2,8,14,.58) 0%, rgba(3,13,22,.07) 52%, rgba(4,16,27,.12) 100%),
+    rgba(1,13,23,.05);
+}
+.login-screen__grid {
+  z-index: 2;
+  pointer-events: none;
   background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
   background-size: 42px 42px;
   mask-image: linear-gradient(90deg, #000, transparent 85%);
+  opacity: .38;
+}
+.login-hero-copy {
+  position: absolute;
+  z-index: 3;
+  left: clamp(34px, 5vw, 86px);
+  bottom: clamp(44px, 8vh, 92px);
+  width: min(520px, 78%);
+  color: rgba(248, 252, 255, .94);
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.2vw, 70px);
+  font-weight: 700;
+  line-height: .88;
+  text-wrap: balance;
+  text-shadow: 0 5px 26px rgba(0,0,0,.5);
+  pointer-events: none;
+}
+.login-hero-copy__line {
+  display: block;
+  opacity: 0;
+  transform: translateY(14px);
+  clip-path: inset(100% 0 0 0);
+  letter-spacing: .075em;
+  animation: loginHeadlineReveal .72s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.login-hero-copy__line--two {
+  margin-top: .08em;
+  color: rgba(235,245,251,.82);
+  font-size: .76em;
+  animation-delay: .14s;
+}
+.login-hero-copy__accent {
+  display: block;
+  width: 0;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(90deg, var(--ct), rgba(21,168,255,.05));
+  box-shadow: 0 0 16px rgba(21,168,255,.32);
+  animation: loginAccentSweep .48s cubic-bezier(.2,.8,.2,1) .48s forwards;
+}
+@keyframes loginHeadlineReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    clip-path: inset(100% 0 0 0);
+    letter-spacing: .075em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+    letter-spacing: .035em;
+  }
+}
+@keyframes loginAccentSweep {
+  from { width: 0; opacity: 0; }
+  to { width: 104px; opacity: .72; }
 }
 .login-card {
+  position: relative;
+  z-index: 5;
+  grid-column: 2;
   align-self: center;
   margin: 0 46px;
   padding: 38px;
@@ -723,6 +815,26 @@ select { cursor: pointer; }
   .map-grid { grid-template-columns: repeat(3, minmax(170px,1fr)); }
 }
 
+@media (max-width: 1080px) {
+  .login-screen { grid-template-columns: 1fr; }
+  .login-screen__backdrop { object-position: var(--scene-mobile-position, var(--scene-position, center)); }
+  .login-screen__veil {
+    background:
+      radial-gradient(circle at 50% 28%, rgba(14,49,72,.07), transparent 36%),
+      linear-gradient(180deg, rgba(2,8,14,.3), rgba(2,8,14,.48) 55%, rgba(2,8,14,.62)),
+      linear-gradient(90deg, rgba(2,8,14,.18), rgba(2,8,14,.28));
+  }
+  .login-hero-copy { display: none; }
+  .login-card {
+    grid-column: 1;
+    width: min(100% - 32px, 520px);
+    margin: auto;
+    padding: 30px;
+    background: linear-gradient(180deg, rgba(10,25,38,.89), rgba(5,14,23,.94));
+    backdrop-filter: blur(16px);
+  }
+}
+
 @media (max-width: 900px) {
   .topnav { grid-template-columns: 130px 1fr auto; min-height: 58px; }
   .topnav__server { min-width: 54px; justify-content: center; }
@@ -791,9 +903,29 @@ select { cursor: pointer; }
   .move-team-row { align-items: flex-start; flex-direction: column; }
   .modal-backdrop { padding: 0; place-items: end center; }
   .modal { border-radius: 10px 10px 0 0; max-height: 92vh; overflow-y: auto; }
-  .login-screen { grid-template-columns: 1fr; }
-  .login-screen__art { display: none; }
-  .login-card { margin: auto 16px; padding: 26px; }
+  .login-card {
+    width: min(100% - 32px, 520px);
+    margin: auto;
+    padding: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-screen__backdrop,
+  .login-screen__backdrop.is-active,
+  .login-screen__backdrop.is-leaving {
+    transition: none;
+    animation: none !important;
+    transform: none;
+  }
+  .login-hero-copy__line {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    letter-spacing: .035em;
+  }
+  .login-hero-copy__accent { animation: none; width: 104px; opacity: .72; }
 }
 
 /* Self-contained map art: keeps the selected mockup's CS2 map atmosphere without external assets. */

@@ -30,6 +30,12 @@
 
 <p align="center"><sub>Presentation screenshots use the built-in demo mode; live mode is populated from the connected CS2 server.</sub></p>
 
+### Cinematic login experience
+
+<img src="docs/readme/login.png" alt="CS2 Admin Plus cinematic login screen with animated CS2 map backgrounds" width="100%">
+
+The login rotates through Mirage, Nuke, Overpass and Ancient with long crossfades, subtle scene motion and a one-time load-in for the server-control headline. Reduced-motion users get a static background with the same layout and readability.
+
 ## One panel for the whole server
 
 CS2 Admin Plus combines a React/Vite frontend, an authenticated Express API, an RCON bridge and a CounterStrikeSharp plugin. The result is a click-first admin surface for the tasks that normally require console commands, separate tools or repeated context switching.
