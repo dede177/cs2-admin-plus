@@ -237,13 +237,13 @@ Vite serves the UI on `http://localhost:5173` and proxies API traffic to `http:/
 
 ### UI demo mode without an RCON server
 
-To inspect the complete interface with populated CS2 demo data, create `frontend/.env.local`:
+To inspect the complete interface with populated CS2 demo data, start the frontend with the explicit demo script:
 
-```env
-VITE_DEMO_MODE=true
+```bash
+npm --prefix frontend run dev:demo
 ```
 
-Then run only the frontend dev server. Demo mode bypasses live RCON calls while keeping the screens populated for UI development and review.
+Normal `npm --prefix frontend run dev` starts the live/authenticated panel. Demo mode bypasses live RCON calls while keeping the screens populated for UI development and review.
 
 ## Build and deploy the CounterStrikeSharp plugin
 
