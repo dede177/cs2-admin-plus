@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Brand, Button, Field } from './ui.jsx'
+import { Button, Field } from './ui.jsx'
 import { getStatus } from '../api/rcon'
 
 export default function Login({ onLogin }) {
@@ -28,7 +28,7 @@ export default function Login({ onLogin }) {
     <main className="login-screen">
       <div className="login-screen__art" />
       <section className="login-card">
-        <Brand />
+        <img className="login-card__logo" src="/mockup-art/nav-logo.png" alt="CS2 Admin Plus" />
         <p className="login-card__eyebrow">SERVER CONTROL</p>
         <h1>Keep the game moving.</h1>
         <p className="login-card__copy">Connect to your CS2 Admin Plus server using the API secret configured on the backend.</p>

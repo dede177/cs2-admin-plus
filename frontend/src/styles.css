@@ -353,6 +353,14 @@ select { cursor: pointer; }
   background: linear-gradient(180deg, rgba(10,25,38,.96), rgba(5,14,23,.98));
   box-shadow: var(--shadow);
 }
+.login-card__logo {
+  display: block;
+  width: 132px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: left center;
+}
 .login-card__eyebrow { margin: 38px 0 6px; color: var(--t); font-family: var(--font-display); font-weight: 700; letter-spacing: .2em; font-size: 12px; }
 .login-card h1 { margin: 0; font-family: var(--font-display); font-size: 42px; line-height: 1; }
 .login-card__copy { color: var(--text-soft); margin: 14px 0 28px; max-width: 390px; }
