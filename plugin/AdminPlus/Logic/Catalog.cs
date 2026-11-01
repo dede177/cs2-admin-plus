@@ -29,9 +29,10 @@ public static class DefaultCatalog
 
     public static List<MapEntry> Maps() => new()
     {
-        Map("de_mirage", "Mirage"), Map("de_inferno", "Inferno"), Map("de_ancient", "Ancient"),
-        Map("de_anubis", "Anubis"), Map("de_dust2", "Dust 2"), Map("de_nuke", "Nuke"),
-        Map("de_overpass", "Overpass"), Map("de_vertigo", "Vertigo"),
+        // ESL Pro League Season 24 Active Duty pool (Overpass moved to reserve when Cache returned)
+        Map("de_ancient", "Ancient"), Map("de_anubis", "Anubis"), Map("de_cache", "Cache"),
+        Map("de_dust2", "Dust 2"), Map("de_inferno", "Inferno"), Map("de_mirage", "Mirage"),
+        Map("de_nuke", "Nuke"),
     };
 
     public static List<ModeDefinition> Modes() => new()

@@ -107,6 +107,14 @@ public class CommandsTests
     }
 
     [Fact]
+    public void Default_maps_are_the_esl_active_duty_pool_in_alphabetical_order()
+    {
+        Assert.Equal(
+            new[] { "de_ancient", "de_anubis", "de_cache", "de_dust2", "de_inferno", "de_mirage", "de_nuke" },
+            DefaultCatalog.Maps().Select(m => m.Name));
+    }
+
+    [Fact]
     public void Default_maps_and_modes_are_all_valid()
     {
         foreach (var map in DefaultCatalog.Maps())
