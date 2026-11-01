@@ -52,7 +52,7 @@ Players with admin flags open the menu with `!admin` (or `/admin`). Entries with
 |---|---|---|
 | Spieler | kick, mute, team, slay, respawn | `@css/kick` |
 | Spieler | ban (1 hour, 1 day, 7 days, permanent) | `@css/ban` |
-| Map und Modus | change map, change mode | `@css/changemap` |
+| Map und Modus | choose a map pack, change map, change mode | `@css/changemap` |
 | Einstellungen | change a whitelisted cvar | `@css/cvar` |
 | Einstellungen | load a config from `cfg/hstx/` | `@css/root` |
 | Match | pause, resume, end warmup, swap teams | `@css/changemap` |
@@ -73,7 +73,8 @@ On first load CounterStrikeSharp creates `configs/plugins/AdminPlus/AdminPlus.js
 - `ConfigDirectory`: folder below `game/csgo/cfg/` whose `*.cfg` files the menu may load (default `hstx`).
 - `MenuType`: `chat` or `center`.
 - `Cvars`: whitelist of changeable cvars (name, label, category, kind `Bool`/`Int`/`Float`/`Choice`, allowed values). Entries with unsafe names or values, and `sv_cheats`, `rcon_password` and `sv_password`, are dropped at load with a warning in the log.
-- `Maps`: map name and optional workshop id.
+- `MapPacks`: map packs shown under "Map und Modus" (`Name`, `Label`, `Maps`). Each map has `Name`, `Label` and an optional `WorkshopId` (workshop maps are loaded with `host_workshop_map`). With several packs the menu asks for a pack first, with a single pack it lists the maps directly. The default is one pack "ESL Pool" (Ancient, Anubis, Cache, Dust 2, Inferno, Mirage, Nuke). An example with an ESL and a fun-map pack is in `plugin/AdminPlus/examples/`.
+- `Maps` (legacy): the old flat map list. It is still read when `MapPacks` is missing and becomes one pack named `maps`; it is not written again.
 - `Modes`: `GameType` and `GameMode` numbers.
 
 Mistakes inside an entry (unknown `Kind`, a number written as `"5"`, an entry of the wrong JSON type) drop only that entry and log a warning; numbers may be written as strings. A **JSON syntax error** (missing bracket, trailing comma) is different: CounterStrikeSharp then refuses to load the whole plugin, including the `sm_*` panel commands, and the error appears in the server console at plugin load. Validate the file after editing it.

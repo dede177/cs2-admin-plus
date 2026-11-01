@@ -9,6 +9,16 @@ public sealed class MapEntry : INamedEntry
     [JsonPropertyName("WorkshopId")] public string WorkshopId { get; set; } = "";
 }
 
+public sealed class MapPack : INamedEntry
+{
+    [JsonPropertyName("Name")] public string Name { get; set; } = "";
+    [JsonPropertyName("Label")] public string Label { get; set; } = "";
+
+    [JsonPropertyName("Maps")]
+    [JsonConverter(typeof(TolerantListConverter<MapEntry>))]
+    public List<MapEntry> Maps { get; set; } = new();
+}
+
 public sealed class ModeDefinition : INamedEntry
 {
     [JsonPropertyName("Name")] public string Name { get; set; } = "";
@@ -33,6 +43,11 @@ public static class DefaultCatalog
         Map("de_ancient", "Ancient"), Map("de_anubis", "Anubis"), Map("de_cache", "Cache"),
         Map("de_dust2", "Dust 2"), Map("de_inferno", "Inferno"), Map("de_mirage", "Mirage"),
         Map("de_nuke", "Nuke"),
+    };
+
+    public static List<MapPack> Packs() => new()
+    {
+        new() { Name = "esl", Label = "ESL Pool", Maps = Maps() },
     };
 
     public static List<ModeDefinition> Modes() => new()

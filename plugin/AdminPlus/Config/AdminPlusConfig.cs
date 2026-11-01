@@ -18,9 +18,23 @@ public class AdminPlusConfig : BasePluginConfig
     [JsonConverter(typeof(TolerantListConverter<CvarDefinition>))]
     public List<CvarDefinition> Cvars { get; set; } = DefaultCvars.Create();
 
+    private List<MapPack>? _packs;
+    private bool _packsSpecified;
+
+    /// <summary>Map packs shown in the menu. A file that does not mention MapPacks gets the default ESL pack (or its legacy Maps list).</summary>
+    [JsonPropertyName("MapPacks")]
+    [JsonConverter(typeof(TolerantListConverter<MapPack>))]
+    public List<MapPack> MapPacks
+    {
+        get => _packs ??= DefaultCatalog.Packs();
+        set { _packs = value; _packsSpecified = true; }
+    }
+
+    /// <summary>Legacy key from before map packs existed: read once, turned into one pack and never written again.</summary>
     [JsonPropertyName("Maps")]
     [JsonConverter(typeof(TolerantListConverter<MapEntry>))]
-    public List<MapEntry> Maps { get; set; } = DefaultCatalog.Maps();
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<MapEntry>? Maps { get; set; }
 
     [JsonPropertyName("Modes")]
     [JsonConverter(typeof(TolerantListConverter<ModeDefinition>))]
@@ -34,6 +48,25 @@ public class AdminPlusConfig : BasePluginConfig
             problems.Add($"{what}-Eintrag konnte nicht gelesen werden (falscher JSON-Typ oder unbekannter Wert), übersprungen");
     }
 
+    private void NormalizeMapPacks(List<string> problems)
+    {
+        List<MapPack> source;
+        if (_packsSpecified) source = _packs ?? new List<MapPack>();
+        else if (Maps is { Count: > 0 }) source = new List<MapPack> { new() { Name = "maps", Label = "Maps", Maps = Maps } };
+        else source = new List<MapPack>();
+
+        var packs = MapPackRules.Sanitize(source, problems);
+        if (packs.Count == 0)
+        {
+            if (_packsSpecified || Maps is { Count: > 0 })
+                problems.Add("Keine gültigen Map-Pakete, verwende das Standardpaket 'esl'");
+            packs = DefaultCatalog.Packs();
+        }
+
+        MapPacks = packs;
+        Maps = null;
+    }
+
     public void Normalize(List<string> problems)
     {
         DropUnreadable(Cvars, "Cvar", problems);
@@ -42,14 +75,7 @@ public class AdminPlusConfig : BasePluginConfig
 
         Cvars = CvarWhitelist.Sanitize(Cvars, problems);
 
-        Maps = (Maps ?? new List<MapEntry>()).Where(m => m != null).ToList();
-        Maps.RemoveAll(m =>
-        {
-            var ok = MapCommands.TryBuild(m, out _);
-            if (!ok) problems.Add($"Map '{m.Name}': ungültig");
-            return !ok;
-        });
-        foreach (var m in Maps.Where(m => string.IsNullOrWhiteSpace(m.Label))) m.Label = m.Name;
+        NormalizeMapPacks(problems);
 
         Modes = (Modes ?? new List<ModeDefinition>()).Where(m => m != null).ToList();
         Modes.RemoveAll(m =>

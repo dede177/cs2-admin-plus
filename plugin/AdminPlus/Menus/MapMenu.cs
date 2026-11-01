@@ -1,5 +1,6 @@
 using AdminPlus.Logic;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Menu;
 
 namespace AdminPlus;
 
@@ -11,12 +12,18 @@ public partial class AdminPlus
 
         if (Can(admin, MenuAction.ChangeMap))
         {
-            foreach (var map in Config.Maps)
+            // One pack: its maps are listed right here. Several packs: the admin picks a pack first.
+            if (Config.MapPacks.Count == 1)
             {
-                var entry = map;
-                menu.AddMenuOption(entry.Label, (p, _) =>
-                    Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, "",
-                        () => AdminActions.ChangeMap(entry)));
+                AddMapOptions(menu, Config.MapPacks[0]);
+            }
+            else
+            {
+                foreach (var pack in Config.MapPacks)
+                {
+                    var entry = pack;
+                    menu.AddMenuOption($"Paket: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
+                }
             }
         }
 
@@ -32,5 +39,27 @@ public partial class AdminPlus
 
         menu.AddMenuOption("Zurück", (p, _) => OpenMain(p));
         Show(menu, admin);
+    }
+
+    internal void OpenPack(CCSPlayerController admin, MapPack pack)
+    {
+        var menu = NewMenu(pack.Label);
+
+        if (Can(admin, MenuAction.ChangeMap))
+            AddMapOptions(menu, pack);
+
+        menu.AddMenuOption("Zurück", (p, _) => OpenMaps(p));
+        Show(menu, admin);
+    }
+
+    private void AddMapOptions(IMenu menu, MapPack pack)
+    {
+        foreach (var map in pack.Maps)
+        {
+            var entry = map;
+            menu.AddMenuOption(entry.Label, (p, _) =>
+                Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
+                    () => AdminActions.ChangeMap(entry)));
+        }
     }
 }

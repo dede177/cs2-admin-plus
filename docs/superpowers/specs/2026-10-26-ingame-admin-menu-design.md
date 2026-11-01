@@ -152,7 +152,7 @@ Eine Datei `AdminPlus.json` im Plugin-Konfigurationsordner von CounterStrikeShar
 
 - `ConfigDirectory` (Standard `hstx`)
 - Cvar-Whitelist (Abschnitt 6.3)
-- Map-Liste mit optionaler Workshop-ID
+- Map-Pakete (`MapPacks`, je Paket eine Map-Liste mit optionaler Workshop-ID); der alte Schlüssel `Maps` wird weiter gelesen und zu einem Paket
 - Spielmodi mit den zugehörigen Cvars
 
 Fehlt die Datei, legt das Plugin Standardwerte an. Einzelne ungültige Einträge (unbekannter `Kind`, falscher JSON-Typ, verbotener Name) werden verworfen und je mit einer Logzeile gemeldet; der Rest funktioniert. Zahlen dürfen auch als Zeichenkette stehen. Ist die Datei dagegen **syntaktisch** ungültig, lädt CounterStrikeSharp das Plugin gar nicht, auch die Panel-Befehle fehlen dann. Das Plugin kann das nicht abfangen, weil die Konfiguration vor `Load` außerhalb jeder Fehlerbehandlung gelesen wird; die README weist darauf hin.

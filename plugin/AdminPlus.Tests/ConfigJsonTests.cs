@@ -34,7 +34,8 @@ public class ConfigJsonTests
 
         Assert.Empty(problems);
         Assert.NotEmpty(config.Cvars);
-        Assert.NotEmpty(config.Maps);
+        Assert.Single(config.MapPacks);
+        Assert.Equal(7, config.MapPacks[0].Maps.Count);
         Assert.NotEmpty(config.Modes);
     }
 
@@ -46,7 +47,7 @@ public class ConfigJsonTests
         config.Normalize(problems);
 
         Assert.Empty(config.Cvars);
-        Assert.Empty(config.Maps);
+        Assert.Single(config.MapPacks);
         Assert.Empty(config.Modes);
     }
 
@@ -69,7 +70,7 @@ public class ConfigJsonTests
         Assert.Equal("hstx", config.ConfigDirectory);
         Assert.Equal("chat", config.MenuType);
         Assert.Equal(new[] { "mp_maxrounds" }, config.Cvars.Select(c => c.Name));
-        Assert.Equal(new[] { "de_nuke" }, config.Maps.Select(m => m.Name));
+        Assert.Equal(new[] { "de_nuke" }, config.MapPacks.Single().Maps.Select(m => m.Name));
         Assert.Equal(new[] { "ok" }, config.Modes.Select(m => m.Name));
         Assert.Equal(5, problems.Count);
     }
@@ -142,7 +143,7 @@ public class ConfigJsonTests
         """, out var problems);
 
         Assert.Equal(new[] { "mp_buytime" }, config.Cvars.Select(c => c.Name));
-        Assert.Equal(new[] { "de_nuke" }, config.Maps.Select(m => m.Name));
+        Assert.Equal(new[] { "de_nuke" }, config.MapPacks.Single().Maps.Select(m => m.Name));
         Assert.Equal(new[] { "ok" }, config.Modes.Select(m => m.Name));
         Assert.Equal(3, problems.Count);
     }
@@ -153,7 +154,7 @@ public class ConfigJsonTests
         var config = LoadAndNormalize("""{ "Cvars": "mp_maxrounds", "Maps": 7, "Modes": { "Name": "x" } }""", out _);
 
         Assert.Empty(config.Cvars);
-        Assert.Empty(config.Maps);
+        Assert.Single(config.MapPacks);
         Assert.Empty(config.Modes);
     }
 
