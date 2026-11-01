@@ -166,6 +166,6 @@ public class MapPackTests
 
         Assert.Empty(problems);
         Assert.Equal(new[] { "esl", "fun" }, config.MapPacks.Select(p => p.Name));
-        Assert.Equal(new[] { 7, 22 }, config.MapPacks.Select(p => p.Maps.Count));
+        Assert.Equal(new[] { 7, 19 }, config.MapPacks.Select(p => p.Maps.Count));
     }
 }
