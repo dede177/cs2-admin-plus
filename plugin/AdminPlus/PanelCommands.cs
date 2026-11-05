@@ -30,6 +30,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_playerinfo_all", "Dump all player info for the web panel")]
     public void OnPlayerInfoAll(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         var players = Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot);
         foreach (var player in players)
         {
@@ -57,6 +58,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_respawn", "Respawn a player")]
     public void OnRespawn(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_respawn <userid>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -69,6 +71,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_setteam", "Move a player to a team")]
     public void OnSetTeam(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 3) { Reply(info, "Usage: sm_setteam <userid> <ct|t|spec>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -101,6 +104,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_givemoney", "Set a player's money")]
     public void OnGiveMoney(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 3) { Reply(info, "Usage: sm_givemoney <userid> <amount>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -116,6 +120,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_givemoney_all", "Set money for all players")]
     public void OnGiveMoneyAll(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_givemoney_all <amount>"); return; }
         if (!int.TryParse(info.ArgByIndex(1), out int amount)) { Reply(info, "Invalid amount"); return; }
 
@@ -135,6 +140,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_giveweapon", "Give a weapon to a player")]
     public void OnGiveWeapon(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 3) { Reply(info, "Usage: sm_giveweapon <userid> <weapon_name>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -150,6 +156,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_giveweapon_all", "Give a weapon to all players")]
     public void OnGiveWeaponAll(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_giveweapon_all <weapon_name>"); return; }
         string weapon = info.ArgByIndex(1);
         if (!weapon.StartsWith("weapon_")) weapon = $"weapon_{weapon}";
@@ -168,6 +175,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_sethp", "Set a player's HP")]
     public void OnSetHp(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 3) { Reply(info, "Usage: sm_sethp <userid> <amount>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -186,6 +194,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_freeze", "Freeze a player")]
     public void OnFreeze(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_freeze <userid>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -203,6 +212,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_unfreeze", "Unfreeze a player")]
     public void OnUnfreeze(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_unfreeze <userid>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -220,6 +230,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_stripweapons", "Remove all weapons from a player")]
     public void OnStripWeapons(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_stripweapons <userid>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -232,6 +243,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_god", "Toggle god mode on a player")]
     public void OnGod(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_god <userid>"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }
@@ -249,6 +261,7 @@ public partial class AdminPlus
     [ConsoleCommand("sm_slap", "Slap a player for optional damage")]
     public void OnSlap(CCSPlayerController? caller, CommandInfo info)
     {
+        if (!PanelAllowed(caller, info)) return;
         if (info.ArgCount < 2) { Reply(info, "Usage: sm_slap <userid> [damage]"); return; }
         var player = FindPlayer(info.ArgByIndex(1));
         if (player == null) { Reply(info, "Player not found"); return; }

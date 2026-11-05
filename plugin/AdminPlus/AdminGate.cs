@@ -1,6 +1,7 @@
 using AdminPlus.Logic;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
+using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
 
@@ -36,6 +37,25 @@ public partial class AdminPlus
             Audit.Format(admin.SteamID, admin.PlayerName, action.ToString(), target, detail, outcome.Result));
 
         admin.PrintToChat($" {ChatColors.Green}[Admin]{ChatColors.Default} {outcome.Message}");
+    }
+
+    /// <summary>
+    /// The web panel calls the sm_* commands over RCON, where the caller is null (server console).
+    /// A player typing one into the game console needs root; anyone else is refused and audited.
+    /// </summary>
+    private bool PanelAllowed(CCSPlayerController? caller, CommandInfo info)
+    {
+        bool allowed = Permissions.AllowsPanelCommand(
+            caller == null, flag => AdminManager.PlayerHasPermissions(caller!, flag));
+
+        if (!allowed)
+        {
+            info.ReplyToCommand("[AdminPlus] Dieser Befehl ist nur über die Server-Konsole oder RCON erlaubt.");
+            Logger.LogInformation("{Line}",
+                Audit.Format(caller!.SteamID, caller.PlayerName, "PanelCommand", info.ArgByIndex(0), "", Audit.Results.Denied));
+        }
+
+        return allowed;
     }
 
     /// <summary>Kick and ban must not hit the admin themself or someone with higher immunity.</summary>
