@@ -11,6 +11,8 @@ public partial class AdminPlus
     private void StartMapCommandLog() =>
         AddCommandListener(null, OnAnyCommand);
 
+    private readonly CommandDuplicateFilter _commandDuplicates = new();
+
     private HookResult OnAnyCommand(CCSPlayerController? player, CommandInfo info)
     {
         try
@@ -19,6 +21,9 @@ public partial class AdminPlus
             if (hit == null) return HookResult.Continue;
 
             bool fromPlayer = player is { IsValid: true };
+            if (_commandDuplicates.IsDuplicate(fromPlayer ? player!.SteamID : 0, hit.Value.Detail, DateTime.UtcNow))
+                return HookResult.Continue;
+
             Logger.LogInformation("{Line}", Audit.Format(
                 fromPlayer ? player!.SteamID : 0,
                 fromPlayer ? player!.PlayerName : "server",
