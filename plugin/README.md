@@ -60,6 +60,8 @@ Players with admin flags open the menu with `!admin` (or `/admin`). Entries with
 
 `@css/root` may do everything. Grant flags in CounterStrikeSharp's `configs/admins.json` and `admin_groups.json`.
 
+Chat menus show six entries per page. Keys 1 to 6 pick an entry, 7 goes back, 8 shows the next page and 9 closes the menu.
+
 Every menu action writes one line to the server log:
 
 ```
@@ -83,7 +85,7 @@ Example configs for testing live in `plugin/AdminPlus/examples/cfg-hstx/`. They 
 
 ### Panel commands
 
-The `sm_*` commands used by the web panel are unchanged.
+The `sm_*` commands used by the web panel keep their syntax. They run when called from the server console or over RCON, which is the way the panel uses them. A player who types one into the game console needs `@css/root`; everyone else gets a refusal, and the attempt is written to the log as `AUDIT … action=PanelCommand … result=denied`.
 
 ## Tests
 
