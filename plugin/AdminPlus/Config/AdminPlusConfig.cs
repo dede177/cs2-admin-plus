@@ -14,6 +14,11 @@ public class AdminPlusConfig : BasePluginConfig
     [JsonConverter(typeof(TolerantStringConverter))]
     public string MenuType { get; set; } = "chat";
 
+    /// <summary>Player slots kept free for humans: bots are removed so that at least this many slots stay open. 0 switches the rule off.</summary>
+    [JsonPropertyName("ReservedHumanSlots")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
+    public int ReservedHumanSlots { get; set; } = BotSlots.DefaultReserved;
+
     [JsonPropertyName("Cvars")]
     [JsonConverter(typeof(TolerantListConverter<CvarDefinition>))]
     public List<CvarDefinition> Cvars { get; set; } = DefaultCvars.Create();
@@ -90,6 +95,12 @@ public class AdminPlusConfig : BasePluginConfig
         {
             problems.Add($"ConfigDirectory '{ConfigDirectory}' ungültig, verwende 'hstx'");
             ConfigDirectory = "hstx";
+        }
+
+        if (!BotSlots.IsValidReserved(ReservedHumanSlots))
+        {
+            problems.Add($"ReservedHumanSlots {ReservedHumanSlots} ungültig (0 bis {BotSlots.MaxReserved}), verwende {BotSlots.DefaultReserved}");
+            ReservedHumanSlots = BotSlots.DefaultReserved;
         }
 
         if (MenuType != "chat" && MenuType != "center")

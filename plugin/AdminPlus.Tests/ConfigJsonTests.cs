@@ -26,6 +26,25 @@ public class ConfigJsonTests
     }
 
     [Fact]
+    public void Reserved_human_slots_default_to_two_and_accept_a_number_in_a_string()
+    {
+        Assert.Equal(2, Load("{}").ReservedHumanSlots);
+        Assert.Equal(3, Load("{\"ReservedHumanSlots\": \"3\"}").ReservedHumanSlots);
+        Assert.Equal(0, Load("{\"ReservedHumanSlots\": 0}").ReservedHumanSlots);
+    }
+
+    [Fact]
+    public void Reserved_human_slots_out_of_range_fall_back_with_a_warning()
+    {
+        var config = Load("{\"ReservedHumanSlots\": 40}");
+        var problems = new List<string>();
+        config.Normalize(problems);
+
+        Assert.Equal(2, config.ReservedHumanSlots);
+        Assert.Contains(problems, p => p.Contains("ReservedHumanSlots"));
+    }
+
+    [Fact]
     public void Empty_json_object_falls_back_to_the_defaults()
     {
         var config = Load("{}");

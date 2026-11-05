@@ -74,6 +74,7 @@ On first load CounterStrikeSharp creates `configs/plugins/AdminPlus/AdminPlus.js
 
 - `ConfigDirectory`: folder below `game/csgo/cfg/` whose `*.cfg` files the menu may load (default `hstx`).
 - `MenuType`: `chat` or `center`.
+- `ReservedHumanSlots`: player slots kept free for humans (default `2`, `0` switches the rule off, maximum 8). Bots may fill the server only up to the player limit minus this number minus the humans already in, so a joining player always finds a free slot. Every few seconds and after each join the plugin kicks surplus bots and lowers `bot_quota` to the allowed number; the GOTV bot does not count. Each removal writes `AUDIT … action=BotSlots …` to the log.
 - `Cvars`: whitelist of changeable cvars (name, label, category, kind `Bool`/`Int`/`Float`/`Choice`, allowed values). Entries with unsafe names or values, and `sv_cheats`, `rcon_password` and `sv_password`, are dropped at load with a warning in the log.
 - `MapPacks`: map packs shown under "Map und Modus" (`Name`, `Label`, `Maps`). Each map has `Name`, `Label` and an optional `WorkshopId` (workshop maps are loaded with `host_workshop_map`). With several packs the menu asks for a pack first, with a single pack it lists the maps directly. The default is one pack "ESL Pool" (Ancient, Anubis, Cache, Dust 2, Inferno, Mirage, Nuke). An example with an ESL and a fun-map pack is in `plugin/AdminPlus/examples/`.
 - `Maps` (legacy): the old flat map list. It is still read when `MapPacks` is missing and becomes one pack named `maps`; it is not written again.
