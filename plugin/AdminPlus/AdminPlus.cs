@@ -9,7 +9,7 @@ namespace AdminPlus;
 public partial class AdminPlus : BasePlugin, IPluginConfig<AdminPlusConfig>
 {
     public override string ModuleName        => "AdminPlus";
-    public override string ModuleVersion     => "1.2.0";
+    public override string ModuleVersion     => "1.3.0";
     public override string ModuleAuthor      => "dede177";
     public override string ModuleDescription => "Web admin panel command bridge and ingame admin menu";
 
@@ -33,6 +33,7 @@ public partial class AdminPlus : BasePlugin, IPluginConfig<AdminPlusConfig>
         AddCommand("css_admin", "Open the HSTX admin menu", OnAdminCommand);
         RegisterListener<Listeners.OnMapStart>(_ => CheckCvarNames());
         StartBotSlotRule();
+        StartMapCommandLog();
 
         Console.WriteLine("[AdminPlus] ✅ Loaded — all sm_ commands registered.");
     }

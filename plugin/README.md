@@ -84,6 +84,10 @@ Mistakes inside an entry (unknown `Kind`, a number written as `"5"`, an entry of
 
 Example configs for testing live in `plugin/AdminPlus/examples/cfg-hstx/`. They are not official tournament configs. Copy them to `game/csgo/cfg/hstx/` yourself.
 
+### Map command log
+
+Map changes made outside the menu are logged too, so the log shows who changed the map: CounterStrikeSharp's `css_map`, `css_changemap`, `css_wsmap` and `css_rcon` in the console or in chat (`!map`, `/changemap` …) and the engine commands `changelevel`, `map`, `host_workshop_map` and `ds_workshop_changelevel`. The line is `AUDIT admin=<SteamID64 or 0 for the server console> … action=MapCommand … detail="css_map de_inferno"`. The line shows that the command was issued, not that it worked. Arguments containing a password word are replaced by `[verborgen]`.
+
 ### Panel commands
 
 The `sm_*` commands used by the web panel keep their syntax. They run when called from the server console or over RCON, which is the way the panel uses them. A player who types one into the game console needs `@css/root`; everyone else gets a refusal, and the attempt is written to the log as `AUDIT … action=PanelCommand … result=denied`.
