@@ -19,6 +19,10 @@ public class AdminPlusConfig : BasePluginConfig
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public int ReservedHumanSlots { get; set; } = BotSlots.DefaultReserved;
 
+    /// <summary>With CS2-SimpleAdmin loaded, AdminPlus adds its entries to that menu and !admin opens only that menu. false keeps the separate chat menu.</summary>
+    [JsonPropertyName("UseSimpleAdminMenu")]
+    public bool UseSimpleAdminMenu { get; set; } = true;
+
     [JsonPropertyName("Cvars")]
     [JsonConverter(typeof(TolerantListConverter<CvarDefinition>))]
     public List<CvarDefinition> Cvars { get; set; } = DefaultCvars.Create();

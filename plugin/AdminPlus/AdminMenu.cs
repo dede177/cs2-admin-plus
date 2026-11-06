@@ -41,6 +41,9 @@ public partial class AdminPlus
             return;
         }
 
+        // SimpleAdmin's menu carries the AdminPlus entries, so its own !admin handler opens it; no second menu here.
+        if (BridgeActive) return;
+
         OpenMain(player);
     }
 
