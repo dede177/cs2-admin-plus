@@ -1,4 +1,4 @@
-AdminPlus 1.4.0 - AdminPlus-Eintraege im Menue von CS2-SimpleAdmin
+AdminPlus 1.4.1 - AdminPlus-Eintraege im Menue von CS2-SimpleAdmin
 
 Enthaelt Bot-Regel (1.2.0), Karten-Log (1.3.x). Nur die DLL ersetzen, die JSON nicht anfassen.
 NUR AdminPlus.dll kopieren, nie die CS2-SimpleAdminApi.dll aus dem Build (die kommt vom Server aus shared/).

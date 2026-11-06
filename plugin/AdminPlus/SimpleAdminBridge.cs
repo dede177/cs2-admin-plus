@@ -2,6 +2,9 @@ using AdminPlus.Logic;
 using CS2_SimpleAdminApi;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 
 namespace AdminPlus;
@@ -17,15 +20,47 @@ public partial class AdminPlus
 
     private ICS2_SimpleAdminApi? _simpleAdmin;
     private bool _bridgeReady;
+    private bool _bridgeAttempted;
 
     /// <summary>True while SimpleAdmin's menu carries the AdminPlus entries, so !admin must not open a second menu.</summary>
-    private bool BridgeActive => _bridgeReady && _simpleAdmin != null;
+    private bool BridgeActive => _bridgeReady;
 
-    public override void OnAllPluginsLoaded(bool hotReload) => ConnectSimpleAdmin();
+    public override void OnAllPluginsLoaded(bool hotReload)
+    {
+        if (!Config.UseSimpleAdminMenu) return;
 
+        // Servers without CS2-SimpleAdmin have no shared CS2-SimpleAdminApi.dll; code that names its types must not run there.
+        if (!SimpleAdminApiPresent())
+        {
+            Logger.LogInformation("AdminPlus: CS2-SimpleAdmin nicht installiert, eigenes Chat-Menü bleibt aktiv");
+            return;
+        }
+
+        try { ConnectSimpleAdmin(); }
+        catch (Exception ex)
+        {
+            _bridgeReady = false;
+            Logger.LogWarning(ex, "AdminPlus: Anbindung an CS2-SimpleAdmin fehlgeschlagen, eigenes Chat-Menü bleibt aktiv");
+        }
+    }
+
+    private bool SimpleAdminApiPresent()
+    {
+        try
+        {
+            var context = AssemblyLoadContext.GetLoadContext(typeof(AdminPlus).Assembly) ?? AssemblyLoadContext.Default;
+            return context.LoadFromAssemblyName(new AssemblyName("CS2-SimpleAdminApi")) != null;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private void ConnectSimpleAdmin()
     {
-        if (!Config.UseSimpleAdminMenu || _simpleAdmin != null) return;
+        if (_simpleAdmin != null) return;
 
         try
         {
@@ -37,6 +72,7 @@ public partial class AdminPlus
             }
 
             _simpleAdmin = api;
+            _bridgeAttempted = true;
             api.OnSimpleAdminReady += RegisterBridgeMenus;
             RegisterBridgeMenus();
         }
@@ -74,6 +110,15 @@ public partial class AdminPlus
     }
 
     public override void Unload(bool hotReload)
+    {
+        if (!_bridgeAttempted) return;
+
+        try { DisconnectSimpleAdmin(); }
+        catch (Exception ex) { Logger.LogWarning(ex, "AdminPlus: Abmeldung von CS2-SimpleAdmin fehlgeschlagen"); }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void DisconnectSimpleAdmin()
     {
         var api = _simpleAdmin;
         if (api == null) return;

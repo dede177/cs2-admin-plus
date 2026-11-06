@@ -9,7 +9,7 @@ namespace AdminPlus;
 public partial class AdminPlus : BasePlugin, IPluginConfig<AdminPlusConfig>
 {
     public override string ModuleName        => "AdminPlus";
-    public override string ModuleVersion     => "1.4.0";
+    public override string ModuleVersion     => "1.4.1";
     public override string ModuleAuthor      => "dede177";
     public override string ModuleDescription => "Web admin panel command bridge and ingame admin menu";
 
