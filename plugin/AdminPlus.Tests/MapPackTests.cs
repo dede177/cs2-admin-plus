@@ -198,4 +198,16 @@ public class MapPackTests
         Assert.Equal("", pack.Cycle);
         Assert.False(MapCommands.TryBuildCycle(cycle, out _));
     }
+
+    [Fact]
+    public void Pack_command_can_name_the_first_map()
+    {
+        Assert.True(MapCommands.TryBuildCycle("aim_maps", out var command, "aim_arena"));
+        Assert.Equal("css_party pack aim_maps aim_arena", command);
+        Assert.True(MapCommands.TryBuildCycle("aim_maps", out command, null));
+        Assert.Equal("css_party pack aim_maps", command);
+        Assert.False(MapCommands.TryBuildCycle("aim_maps", out _, "aim arena"));
+        Assert.False(MapCommands.TryBuildCycle("aim_maps", out _, "x;quit"));
+        Assert.False(MapCommands.TryBuildCycle("aim_maps", out _, ""));
+    }
 }

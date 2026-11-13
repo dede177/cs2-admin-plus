@@ -33,11 +33,12 @@ public static class MapCommands
     public static bool IsValidCycleName(string? name) => name != null && CycleRx.IsMatch(name);
 
     /// <summary>Befehl des Plugins HstxMapRotation: laedt ein Paket, danach laeuft nur dessen Kartenrotation.</summary>
-    public static bool TryBuildCycle(string? cycle, out string command)
+    public static bool TryBuildCycle(string? cycle, out string command, string? firstMap = null)
     {
         command = "";
         if (!IsValidCycleName(cycle)) return false;
-        command = $"css_party pack {cycle}";
+        if (firstMap != null && !IsValidMapName(firstMap)) return false;
+        command = firstMap == null ? $"css_party pack {cycle}" : $"css_party pack {cycle} {firstMap}";
         return true;
     }
 

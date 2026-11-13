@@ -81,13 +81,14 @@ internal static class AdminActions
         return ActionResult.Ok($"Mapwechsel auf {map.Label}.");
     }
 
-    public static ActionResult LoadPack(MapPack pack)
+    /// <summary>Laedt das Paket; mit firstMap startet es mit dieser Karte (sonst zufaellig).</summary>
+    public static ActionResult LoadPack(MapPack pack, MapEntry? firstMap = null)
     {
-        if (!MapCommands.TryBuildCycle(pack.Cycle, out var command))
-            return ActionResult.Invalid("Dieses Paket hat keine Kartenrotation.");
+        if (!MapCommands.TryBuildCycle(pack.Cycle, out var command, firstMap?.Name))
+            return ActionResult.Invalid("Dieses Paket hat keine Kartenrotation oder die Karte ist ungültig.");
 
         Server.ExecuteCommand(command);
-        return ActionResult.Ok($"Paket {pack.Label} wird geladen.");
+        return ActionResult.Ok(firstMap == null ? $"Paket {pack.Label} wird geladen." : $"Paket {pack.Label} wird geladen, Start mit {firstMap.Label}.");
     }
 
     public static ActionResult ChangeMode(ModeDefinition mode)

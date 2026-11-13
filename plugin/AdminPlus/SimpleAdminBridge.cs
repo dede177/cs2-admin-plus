@@ -162,7 +162,7 @@ public partial class AdminPlus
             foreach (var pack in Config.MapPacks)
             {
                 var entry = pack;
-                api.AddSubMenu(menu, $"Karte aus Paket: {entry.Label} ({entry.Maps.Count})",
+                api.AddSubMenu(menu, $"Karten: {entry.Label} ({entry.Maps.Count})",
                     p => BuildPackMenu(api, entry, p), false, null);
             }
         }
@@ -191,9 +191,13 @@ public partial class AdminPlus
         foreach (var map in pack.Maps)
         {
             var entry = map;
-            api.AddMenuOption(menu, entry.Label, p =>
-                Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
-                    () => AdminActions.ChangeMap(entry)), false, null);
+            if (!string.IsNullOrEmpty(pack.Cycle))
+                api.AddMenuOption(menu, entry.Label, p =>
+                    Execute(p, MenuAction.ChangeMap, entry.Name, $"Paket laden {pack.Cycle}", () => AdminActions.LoadPack(pack, entry)), false, null);
+            else
+                api.AddMenuOption(menu, entry.Label, p =>
+                    Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
+                        () => AdminActions.ChangeMap(entry)), false, null);
         }
 
         return menu;

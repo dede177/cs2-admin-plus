@@ -29,7 +29,7 @@ public partial class AdminPlus
                 foreach (var pack in Config.MapPacks)
                 {
                     var entry = pack;
-                    menu.AddMenuOption($"Karte aus Paket: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
+                    menu.AddMenuOption($"Karten: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
                 }
             }
         }
@@ -69,9 +69,13 @@ public partial class AdminPlus
         foreach (var map in pack.Maps)
         {
             var entry = map;
-            menu.AddMenuOption(entry.Label, (p, _) =>
-                Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
-                    () => AdminActions.ChangeMap(entry)));
+            if (!string.IsNullOrEmpty(pack.Cycle))
+                menu.AddMenuOption(entry.Label, (p, _) =>
+                    Execute(p, MenuAction.ChangeMap, entry.Name, $"Paket laden {pack.Cycle}", () => AdminActions.LoadPack(pack, entry)));
+            else
+                menu.AddMenuOption(entry.Label, (p, _) =>
+                    Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
+                        () => AdminActions.ChangeMap(entry)));
         }
     }
 }
