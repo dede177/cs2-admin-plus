@@ -1,0 +1,146 @@
+{
+  "MapPacks": [
+    {
+      "Name": "esl",
+      "Label": "ESL Pool",
+      "Maps": [
+        {
+          "Name": "de_ancient",
+          "Label": "Ancient",
+          "WorkshopId": ""
+        },
+        {
+          "Name": "de_anubis",
+          "Label": "Anubis",
+          "WorkshopId": ""
+        },
+        {
+          "Name": "de_cache",
+          "Label": "Cache",
+          "WorkshopId": ""
+        },
+        {
+          "Name": "de_dust2",
+          "Label": "Dust 2",
+          "WorkshopId": ""
+        },
+        {
+          "Name": "de_inferno",
+          "Label": "Inferno",
+          "WorkshopId": ""
+        },
+        {
+          "Name": "de_mirage",
+          "Label": "Mirage",
+          "WorkshopId": ""
+        },
+        {
+          "Name": "de_nuke",
+          "Label": "Nuke",
+          "WorkshopId": ""
+        }
+      ]
+    },
+    {
+      "Name": "fun",
+      "Label": "GunGame Fun-Maps",
+      "Maps": [
+        {
+          "Name": "aim_homage",
+          "Label": "Aim Homage",
+          "WorkshopId": "3678786768"
+        },
+        {
+          "Name": "aim_pistol_fps",
+          "Label": "Aim Pistol Fps",
+          "WorkshopId": "3772429699"
+        },
+        {
+          "Name": "fy_twotowers",
+          "Label": "FY Twotowers",
+          "WorkshopId": "3487791113"
+        },
+        {
+          "Name": "fy_pillarwar",
+          "Label": "FY Pillarwar",
+          "WorkshopId": "3669868734"
+        },
+        {
+          "Name": "fy_simpsons_d_prefab",
+          "Label": "FY Simpsons D Prefab",
+          "WorkshopId": "3307366688"
+        },
+        {
+          "Name": "ar_pool_day",
+          "Label": "AR Pool Day",
+          "WorkshopId": "3263935964"
+        },
+        {
+          "Name": "fy_iceworld_remake",
+          "Label": "FY Iceworld Remake",
+          "WorkshopId": "3232823461"
+        },
+        {
+          "Name": "fy_square_hrabova",
+          "Label": "FY Square Hrabova",
+          "WorkshopId": "3391708203"
+        },
+        {
+          "Name": "poolday_dark_carnival",
+          "Label": "Poolday Dark Carnival",
+          "WorkshopId": "3080375234"
+        },
+        {
+          "Name": "fy_pool_day_cuba",
+          "Label": "FY Pool Day Cuba",
+          "WorkshopId": "3125687254"
+        },
+        {
+          "Name": "fy_dinoiceworld",
+          "Label": "FY Dinoiceworld",
+          "WorkshopId": "3137491782"
+        },
+        {
+          "Name": "fy_oag_s2",
+          "Label": "FY Oag S2",
+          "WorkshopId": "3306059839"
+        },
+        {
+          "Name": "fy_kingofthehill",
+          "Label": "FY Kingofthehill",
+          "WorkshopId": "3076866475"
+        },
+        {
+          "Name": "fy_mindmaze_cs2",
+          "Label": "FY Mindmaze Cs2",
+          "WorkshopId": "3246622304"
+        },
+        {
+          "Name": "aim_project2",
+          "Label": "Aim Project2",
+          "WorkshopId": "3142942025"
+        },
+        {
+          "Name": "fy_amazonprime",
+          "Label": "FY Amazonprime",
+          "WorkshopId": "3094584540"
+        },
+        {
+          "Name": "fy_stockroom",
+          "Label": "FY Stockroom",
+          "WorkshopId": "3078986451"
+        },
+        {
+          "Name": "fy_poolparty_classic",
+          "Label": "FY Poolparty Classic",
+          "WorkshopId": "3457333984"
+        },
+        {
+          "Name": "awp_nuke",
+          "Label": "Awp Nuke",
+          "WorkshopId": "3625642837"
+        }
+      ]
+    }
+  ]
+}

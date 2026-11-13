@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile-time stub only. The real CS2-SimpleAdminApi.dll comes from the server (shared/CS2-SimpleAdminApi)
+    and is built for .NET 10, which this plugin (net8.0) cannot reference directly. The stub carries the same
+    assembly name, namespace and member signatures for the few members AdminPlus calls.
+    It must NEVER be copied to the server: the plugin would load it instead of the shared assembly.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>CS2-SimpleAdminApi</AssemblyName>
+    <RootNamespace>CS2_SimpleAdminApi</RootNamespace>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.367" />
+  </ItemGroup>
+
+</Project>

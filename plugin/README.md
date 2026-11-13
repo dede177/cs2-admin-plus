@@ -44,6 +44,63 @@ All commands are callable via RCON from the web panel:
 | `sm_god` | `<userid>` | Toggle god mode |
 | `sm_slap` | `<userid> [damage]` | Slap a player |
 
+## Ingame admin menu
+
+Players with admin flags open the menu with `!admin` (or `/admin`). Entries without permission are hidden, and every action re-checks the permission when it runs. Menu texts are German.
+
+| Area | Actions | Flag |
+|---|---|---|
+| Spieler | kick, mute, team, slay, respawn | `@css/kick` |
+| Spieler | ban (1 hour, 1 day, 7 days, permanent) | `@css/ban` |
+| Map und Modus | choose a map pack, change map, change mode | `@css/changemap` |
+| Einstellungen | change a whitelisted cvar | `@css/cvar` |
+| Einstellungen | load a config from `cfg/hstx/` | `@css/root` |
+| Match | pause, resume, end warmup, swap teams | `@css/changemap` |
+| Match | restart | `@css/root` |
+
+`@css/root` may do everything. Grant flags in CounterStrikeSharp's `configs/admins.json` and `admin_groups.json`.
+
+Chat menus show six entries per page. Keys 1 to 6 pick an entry, 7 goes back, 8 shows the next page and 9 closes the menu.
+
+Every menu action writes one line to the server log:
+
+```
+AUDIT admin=<SteamID64> name="<name>" action=<Action> target="<target>" detail="<value>" result=<ok|denied|target_gone|invalid|error>
+```
+
+### Configuration
+
+On first load CounterStrikeSharp creates `configs/plugins/AdminPlus/AdminPlus.json` with the defaults:
+
+- `ConfigDirectory`: folder below `game/csgo/cfg/` whose `*.cfg` files the menu may load (default `hstx`).
+- `MenuType`: `chat` or `center`.
+- `ReservedHumanSlots`: player slots kept free for humans (default `2`, `0` switches the rule off, maximum 8). Bots may fill the server only up to the player limit minus this number minus the humans already in, so a joining player always finds a free slot. Every few seconds and after each join the plugin kicks surplus bots and lowers `bot_quota` to the allowed number; the GOTV bot does not count. Each removal writes `AUDIT … action=BotSlots …` to the log.
+- `Cvars`: whitelist of changeable cvars (name, label, category, kind `Bool`/`Int`/`Float`/`Choice`, allowed values). Entries with unsafe names or values, and `sv_cheats`, `rcon_password` and `sv_password`, are dropped at load with a warning in the log.
+- `MapPacks`: map packs shown under "Map und Modus" (`Name`, `Label`, `Maps`). Each map has `Name`, `Label` and an optional `WorkshopId` (workshop maps are loaded with `host_workshop_map`). With several packs the menu asks for a pack first, with a single pack it lists the maps directly. The default is one pack "ESL Pool" (Ancient, Anubis, Cache, Dust 2, Inferno, Mirage, Nuke). An example with an ESL and a fun-map pack is in `plugin/AdminPlus/examples/`.
+- `MapPacks[].Cycle` (optional): name of a rotation pack of the HstxMapRotation plugin (lowercase letters, digits, `_`, up to 24 characters). A pack with `Cycle` gets the menu entry "Paket laden", which runs `css_party pack <Cycle>`: the plugin then rotates only the maps of that pack, in the pack's mode. Needs `@css/changemap`, writes `AUDIT … action=ChangeMap … detail="Paket laden"`. Without the plugin the command does nothing. Packs without `Cycle` stay a submenu "Karten: …" in which one map is picked. A pack with `Cycle` has exactly one entry, "Paket laden: …".
+- `Maps` (legacy): the old flat map list. It is still read when `MapPacks` is missing and becomes one pack named `maps`; it is not written again.
+- `Modes`: `GameType` and `GameMode` numbers.
+
+Mistakes inside an entry (unknown `Kind`, a number written as `"5"`, an entry of the wrong JSON type) drop only that entry and log a warning; numbers may be written as strings. A **JSON syntax error** (missing bracket, trailing comma) is different: CounterStrikeSharp then refuses to load the whole plugin, including the `sm_*` panel commands, and the error appears in the server console at plugin load. Validate the file after editing it.
+
+Example configs for testing live in `plugin/AdminPlus/examples/cfg-hstx/`. They are not official tournament configs. Copy them to `game/csgo/cfg/hstx/` yourself.
+
+### Map command log
+
+Map changes made outside the menu are logged too, so the log shows who changed the map: CounterStrikeSharp's `css_map`, `css_changemap`, `css_wsmap` and `css_rcon` in the console or in chat (`!map`, `/changemap` …) and the engine commands `changelevel`, `map`, `host_workshop_map` and `ds_workshop_changelevel`. The line is `AUDIT admin=<SteamID64 or 0 for the server console> … action=MapCommand … detail="css_map de_inferno"`. The line shows that the command was issued, not that it worked. Arguments containing a password word are replaced by `[verborgen]`.
+
+### Panel commands
+
+The `sm_*` commands used by the web panel keep their syntax. They run when called from the server console or over RCON, which is the way the panel uses them. A player who types one into the game console needs `@css/root`; everyone else gets a refusal, and the attempt is written to the log as `AUDIT … action=PanelCommand … result=denied`.
+
+## Tests
+
+```bash
+dotnet test plugin/AdminPlus.Tests
+```
+
+The tests cover the pure logic in `plugin/AdminPlus/Logic/`. The menu itself needs a running CS2 server with Metamod and CounterStrikeSharp.
+
 ## Requirements
 
 - CounterStrikeSharp installed on your CS2 server
