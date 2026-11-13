@@ -81,6 +81,15 @@ internal static class AdminActions
         return ActionResult.Ok($"Mapwechsel auf {map.Label}.");
     }
 
+    public static ActionResult LoadPack(MapPack pack)
+    {
+        if (!MapCommands.TryBuildCycle(pack.Cycle, out var command))
+            return ActionResult.Invalid("Dieses Paket hat keine Kartenrotation.");
+
+        Server.ExecuteCommand(command);
+        return ActionResult.Ok($"Paket {pack.Label} wird geladen.");
+    }
+
     public static ActionResult ChangeMode(ModeDefinition mode)
     {
         if (!MapCommands.TryBuildMode(mode, Server.MapName, out var commands))

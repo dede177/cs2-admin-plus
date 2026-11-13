@@ -168,4 +168,34 @@ public class MapPackTests
         Assert.Equal(new[] { "esl", "fun" }, config.MapPacks.Select(p => p.Name));
         Assert.Equal(new[] { 7, 19 }, config.MapPacks.Select(p => p.Maps.Count));
     }
+
+    [Fact]
+    public void Cycle_name_is_read_and_builds_the_pack_command()
+    {
+        var config = Load("""{ "MapPacks": [ { "Name": "aim", "Label": "AIM", "Cycle": "aim_maps", "Maps": [ { "Name": "aim_arena" } ] }, { "Name": "plain", "Maps": [ { "Name": "de_dust2" } ] } ] }""", out var problems);
+
+        Assert.Empty(problems);
+        Assert.Equal("aim_maps", config.MapPacks[0].Cycle);
+        Assert.Equal("", config.MapPacks[1].Cycle);
+        Assert.True(MapCommands.TryBuildCycle("aim_maps", out var command));
+        Assert.Equal("css_party pack aim_maps", command);
+        Assert.False(MapCommands.TryBuildCycle("", out _));
+    }
+
+    [Theory]
+    [InlineData("AIM")]
+    [InlineData("aim maps")]
+    [InlineData("aim;quit")]
+    [InlineData("aim_maps\nquit")]
+    [InlineData("this_name_is_far_too_long_for_it")]
+    public void Unsafe_cycle_names_are_dropped_but_the_pack_stays(string cycle)
+    {
+        var json = JsonSerializer.Serialize(new { MapPacks = new[] { new { Name = "aim", Label = "AIM", Cycle = cycle, Maps = new[] { new { Name = "aim_arena", Label = "Aim Arena" } } } } });
+        var config = Load(json, out var problems);
+
+        Assert.Single(problems);
+        var pack = Assert.Single(config.MapPacks);
+        Assert.Equal("", pack.Cycle);
+        Assert.False(MapCommands.TryBuildCycle(cycle, out _));
+    }
 }

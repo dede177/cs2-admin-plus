@@ -19,10 +19,17 @@ public partial class AdminPlus
             }
             else
             {
+                foreach (var pack in Config.MapPacks.Where(p => !string.IsNullOrEmpty(p.Cycle)))
+                {
+                    var entry = pack;
+                    menu.AddMenuOption($"Paket laden: {entry.Label} ({entry.Maps.Count})", (p, _) =>
+                        Execute(p, MenuAction.ChangeMap, entry.Cycle, "Paket laden", () => AdminActions.LoadPack(entry)));
+                }
+
                 foreach (var pack in Config.MapPacks)
                 {
                     var entry = pack;
-                    menu.AddMenuOption($"Paket: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
+                    menu.AddMenuOption($"Karte aus Paket: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
                 }
             }
         }
@@ -46,7 +53,12 @@ public partial class AdminPlus
         var menu = NewMenu(pack.Label);
 
         if (Can(admin, MenuAction.ChangeMap))
+        {
+            if (!string.IsNullOrEmpty(pack.Cycle))
+                menu.AddMenuOption("Paket laden (Rotation starten)", (p, _) =>
+                    Execute(p, MenuAction.ChangeMap, pack.Cycle, "Paket laden", () => AdminActions.LoadPack(pack)));
             AddMapOptions(menu, pack);
+        }
 
         menu.AddMenuOption("Zurück", (p, _) => OpenMaps(p));
         Show(menu, admin);

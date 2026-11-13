@@ -151,10 +151,18 @@ public partial class AdminPlus
 
         if (Can(admin, MenuAction.ChangeMap))
         {
+            // Pakete mit Kartenrotation: ein Klick laedt das Paket, danach laeuft nur dessen Rotation.
+            foreach (var pack in Config.MapPacks.Where(p => !string.IsNullOrEmpty(p.Cycle)))
+            {
+                var entry = pack;
+                api.AddMenuOption(menu, $"Paket laden: {entry.Label} ({entry.Maps.Count})", p =>
+                    Execute(p, MenuAction.ChangeMap, entry.Cycle, "Paket laden", () => AdminActions.LoadPack(entry)), false, null);
+            }
+
             foreach (var pack in Config.MapPacks)
             {
                 var entry = pack;
-                api.AddSubMenu(menu, $"Paket: {entry.Label} ({entry.Maps.Count})",
+                api.AddSubMenu(menu, $"Karte aus Paket: {entry.Label} ({entry.Maps.Count})",
                     p => BuildPackMenu(api, entry, p), false, null);
             }
         }
@@ -175,6 +183,10 @@ public partial class AdminPlus
     private object BuildPackMenu(ICS2_SimpleAdminApi api, MapPack pack, CCSPlayerController admin)
     {
         var menu = api.CreateMenuWithBack(pack.Label, BridgeMenus.CategoryId, admin);
+
+        if (!string.IsNullOrEmpty(pack.Cycle))
+            api.AddMenuOption(menu, "Paket laden (Rotation starten)", p =>
+                Execute(p, MenuAction.ChangeMap, pack.Cycle, "Paket laden", () => AdminActions.LoadPack(pack)), false, null);
 
         foreach (var map in pack.Maps)
         {
