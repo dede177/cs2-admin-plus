@@ -151,19 +151,17 @@ public partial class AdminPlus
 
         if (Can(admin, MenuAction.ChangeMap))
         {
-            // Pakete mit Kartenrotation: ein Klick laedt das Paket, danach laeuft nur dessen Rotation.
-            foreach (var pack in Config.MapPacks.Where(p => !string.IsNullOrEmpty(p.Cycle)))
-            {
-                var entry = pack;
-                api.AddMenuOption(menu, $"Paket laden: {entry.Label} ({entry.Maps.Count})", p =>
-                    Execute(p, MenuAction.ChangeMap, entry.Cycle, "Paket laden", () => AdminActions.LoadPack(entry)), false, null);
-            }
-
+            // Ein Eintrag je Paket. Mit Cycle: ein Klick laedt das Paket, danach laeuft nur dessen Rotation.
+            // Ohne Cycle: Untermenue, in dem eine einzelne Karte gewaehlt wird.
             foreach (var pack in Config.MapPacks)
             {
                 var entry = pack;
-                api.AddSubMenu(menu, $"Karten: {entry.Label} ({entry.Maps.Count})",
-                    p => BuildPackMenu(api, entry, p), false, null);
+                if (!string.IsNullOrEmpty(entry.Cycle))
+                    api.AddMenuOption(menu, $"Paket laden: {entry.Label} ({entry.Maps.Count})", p =>
+                        Execute(p, MenuAction.ChangeMap, entry.Cycle, "Paket laden", () => AdminActions.LoadPack(entry)), false, null);
+                else
+                    api.AddSubMenu(menu, $"Karten: {entry.Label} ({entry.Maps.Count})",
+                        p => BuildPackMenu(api, entry, p), false, null);
             }
         }
 
@@ -184,20 +182,12 @@ public partial class AdminPlus
     {
         var menu = api.CreateMenuWithBack(pack.Label, BridgeMenus.CategoryId, admin);
 
-        if (!string.IsNullOrEmpty(pack.Cycle))
-            api.AddMenuOption(menu, "Paket laden (Rotation starten)", p =>
-                Execute(p, MenuAction.ChangeMap, pack.Cycle, "Paket laden", () => AdminActions.LoadPack(pack)), false, null);
-
         foreach (var map in pack.Maps)
         {
             var entry = map;
-            if (!string.IsNullOrEmpty(pack.Cycle))
-                api.AddMenuOption(menu, entry.Label, p =>
-                    Execute(p, MenuAction.ChangeMap, entry.Name, $"Paket laden {pack.Cycle}", () => AdminActions.LoadPack(pack, entry)), false, null);
-            else
-                api.AddMenuOption(menu, entry.Label, p =>
-                    Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
-                        () => AdminActions.ChangeMap(entry)), false, null);
+            api.AddMenuOption(menu, entry.Label, p =>
+                Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
+                    () => AdminActions.ChangeMap(entry)), false, null);
         }
 
         return menu;

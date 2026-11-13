@@ -12,24 +12,22 @@ public partial class AdminPlus
 
         if (Can(admin, MenuAction.ChangeMap))
         {
-            // One pack: its maps are listed right here. Several packs: the admin picks a pack first.
-            if (Config.MapPacks.Count == 1)
+            // One pack without a rotation: its maps are listed right here. Otherwise one entry per pack: with Cycle it loads the
+            // pack (its rotation runs from then on), without Cycle the admin picks a single map in a submenu.
+            if (Config.MapPacks.Count == 1 && string.IsNullOrEmpty(Config.MapPacks[0].Cycle))
             {
                 AddMapOptions(menu, Config.MapPacks[0]);
             }
             else
             {
-                foreach (var pack in Config.MapPacks.Where(p => !string.IsNullOrEmpty(p.Cycle)))
-                {
-                    var entry = pack;
-                    menu.AddMenuOption($"Paket laden: {entry.Label} ({entry.Maps.Count})", (p, _) =>
-                        Execute(p, MenuAction.ChangeMap, entry.Cycle, "Paket laden", () => AdminActions.LoadPack(entry)));
-                }
-
                 foreach (var pack in Config.MapPacks)
                 {
                     var entry = pack;
-                    menu.AddMenuOption($"Karten: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
+                    if (!string.IsNullOrEmpty(entry.Cycle))
+                        menu.AddMenuOption($"Paket laden: {entry.Label} ({entry.Maps.Count})", (p, _) =>
+                            Execute(p, MenuAction.ChangeMap, entry.Cycle, "Paket laden", () => AdminActions.LoadPack(entry)));
+                    else
+                        menu.AddMenuOption($"Karten: {entry.Label} ({entry.Maps.Count})", (p, _) => OpenPack(p, entry));
                 }
             }
         }
@@ -53,12 +51,7 @@ public partial class AdminPlus
         var menu = NewMenu(pack.Label);
 
         if (Can(admin, MenuAction.ChangeMap))
-        {
-            if (!string.IsNullOrEmpty(pack.Cycle))
-                menu.AddMenuOption("Paket laden (Rotation starten)", (p, _) =>
-                    Execute(p, MenuAction.ChangeMap, pack.Cycle, "Paket laden", () => AdminActions.LoadPack(pack)));
             AddMapOptions(menu, pack);
-        }
 
         menu.AddMenuOption("Zurück", (p, _) => OpenMaps(p));
         Show(menu, admin);
@@ -69,13 +62,9 @@ public partial class AdminPlus
         foreach (var map in pack.Maps)
         {
             var entry = map;
-            if (!string.IsNullOrEmpty(pack.Cycle))
-                menu.AddMenuOption(entry.Label, (p, _) =>
-                    Execute(p, MenuAction.ChangeMap, entry.Name, $"Paket laden {pack.Cycle}", () => AdminActions.LoadPack(pack, entry)));
-            else
-                menu.AddMenuOption(entry.Label, (p, _) =>
-                    Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
-                        () => AdminActions.ChangeMap(entry)));
+            menu.AddMenuOption(entry.Label, (p, _) =>
+                Execute(p, MenuAction.ChangeMap, string.IsNullOrEmpty(entry.WorkshopId) ? entry.Name : entry.WorkshopId, pack.Name,
+                    () => AdminActions.ChangeMap(entry)));
         }
     }
 }
