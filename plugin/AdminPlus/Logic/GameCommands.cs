@@ -26,7 +26,21 @@ public static class MapCommands
     private static readonly Regex MapRx = new(@"^[a-z0-9_]{1,64}\z", RegexOptions.CultureInvariant);
     private static readonly Regex WorkshopRx = new(@"^[0-9]{1,20}\z", RegexOptions.CultureInvariant);
 
+    private static readonly Regex CycleRx = new(@"^[a-z0-9_]{1,24}\z", RegexOptions.CultureInvariant);
+
     public static bool IsValidMapName(string? name) => name != null && MapRx.IsMatch(name);
+
+    public static bool IsValidCycleName(string? name) => name != null && CycleRx.IsMatch(name);
+
+    /// <summary>Befehl des Plugins HstxMapRotation: laedt ein Paket, danach laeuft nur dessen Kartenrotation.</summary>
+    public static bool TryBuildCycle(string? cycle, out string command, string? firstMap = null)
+    {
+        command = "";
+        if (!IsValidCycleName(cycle)) return false;
+        if (firstMap != null && !IsValidMapName(firstMap)) return false;
+        command = firstMap == null ? $"css_party pack {cycle}" : $"css_party pack {cycle} {firstMap}";
+        return true;
+    }
 
     public static bool TryBuild(MapEntry map, out string command)
     {

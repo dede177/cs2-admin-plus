@@ -14,6 +14,11 @@ public sealed class MapPack : INamedEntry
     [JsonPropertyName("Name")] public string Name { get; set; } = "";
     [JsonPropertyName("Label")] public string Label { get; set; } = "";
 
+    /// <summary>Optional: name of a rotation pack of the HstxMapRotation plugin. With it the menu offers "Paket laden" (css_party pack NAME).</summary>
+    [JsonPropertyName("Cycle")]
+    [JsonConverter(typeof(TolerantStringConverter))]
+    public string Cycle { get; set; } = "";
+
     [JsonPropertyName("Maps")]
     [JsonConverter(typeof(TolerantListConverter<MapEntry>))]
     public List<MapEntry> Maps { get; set; } = new();

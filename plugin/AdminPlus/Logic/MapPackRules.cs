@@ -53,6 +53,11 @@ public static class MapPackRules
 
             pack.Maps = maps;
             if (string.IsNullOrWhiteSpace(pack.Label)) pack.Label = pack.Name;
+            if (!string.IsNullOrEmpty(pack.Cycle) && !MapCommands.IsValidCycleName(pack.Cycle))
+            {
+                problems.Add($"Map-Paket '{pack.Name}': Cycle '{pack.Cycle}' ungültig, 'Paket laden' fällt weg");
+                pack.Cycle = "";
+            }
             result.Add(pack);
         }
 
